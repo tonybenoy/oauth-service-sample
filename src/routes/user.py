@@ -2,7 +2,7 @@ import uuid
 from typing import Dict, Tuple
 
 from flask import Blueprint, request
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 from src.models.document import Client, User
 from src.utils.helper import (
@@ -33,7 +33,7 @@ def login() -> Tuple[Dict[str, str], int]:
 
 
 @user_bp.route("/register/client", methods=["POST"])  # type: ignore
-@jwt_required  # type: ignore
+@jwt_required()  # type: ignore
 def register_client() -> Tuple[Dict[str, str], int]:
     """This method is used to register the client
     :param client_id: client id of the client
@@ -44,16 +44,21 @@ def register_client() -> Tuple[Dict[str, str], int]:
     """
     data = request.get_json()
     user_name = data.get("username")
-    password = data.get("password")
-    if not user_name or not password:
-        return {"message": "Invalid authentication!"}, 400
-    client_id = data.get("client_id")
+    auth_user = check_existing_user(get_jwt_identity())
     name = data.get("name")
+
+    if not auth_user.admin:
+        return {"message": "Authenticate with an admin user!"}, 400
+    password = data.get("password")
+    if not user_name or not password or not name:
+        return {"message": "Missing params!"}, 400
+    client_id = data.get("client_id")
     client_secret = uuid.uuid4().hex
     encrypted_password = encrypt_password(password)
     user = check_existing_user(user_name, encrypted_password)
-    if not user or user.password != encrypted_password or not user.admin:
-        return {"message": "Invalid authentication!"}, 400
+    if user:
+        return {"message": "Existing user!"}, 400
+    client_user = User(username=user_name, password=encrypted_password, admin=False)
     if not client_id or not name:
         return {"message": "Invalid client!"}, 400
     existing_client = check_existing_client(client_id)

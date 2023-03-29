@@ -25,7 +25,7 @@ def approve_kyc() -> Tuple[Dict[str, str], int]:
 
 
 @kyc_bp.route("/apply", methods=["POST"])  # type: ignore
-@jwt_required  # type: ignore
+@jwt_required()  # type: ignore
 def apply_kyc() -> Tuple[Dict[str, str], int]:
     """Apply for KYC
     :return: Message"""
