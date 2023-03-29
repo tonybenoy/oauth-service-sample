@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "oauth-service"
+version = "0.1.0"
+description = ""
+authors = ["Tony Benoy <me@tonybenoy.com>"]
+readme = "README.md"
+packages = [{include = "oauth_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.2.3"
+gunicorn = "^20.1.0"
+pymongo = "^4.3.3"
+python-dotenv = "^1.0.0"
+flask-oauthlib = "^0.9.6"
+flask-mongoengine = "^1.0.0"
+flask-jwt-extended = "^4.4.4"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+pre-commit = "^3.2.1"
+isort = "^5.12.0"
+pylint = "^2.17.1"
+mypy = "^1.1.1"
+pytest = "^7.2.2"
+mongomock = "^4.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

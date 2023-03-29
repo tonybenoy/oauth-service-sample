@@ -1,0 +1,28 @@
+version: "3"
+services:
+
+  flask_service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: flask_service
+    ports:
+      - "8000:8000"
+    network_mode: host
+    depends_on:
+      - mongodb_container
+
+
+
+  mongodb_container:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: oauth
+    ports:
+      - 27017:27017
+    network_mode: host
+    volumes:
+      - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:
